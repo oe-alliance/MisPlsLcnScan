@@ -8,6 +8,36 @@
 
 #include <Python.h>
 
+#if PY_MAJOR_VERSION >= 3
+#include <bytesobject.h>
+char *Py3_UnicodeUtf8String(char *name_ptr)
+{
+	PyObject *pyname;
+	PyObject *utf8string;
+	char *str;
+
+	str = "(Unknown)";
+
+	pyname = PyUnicode_DecodeLatin1(name_ptr, strlen(name_ptr), NULL);
+	if (!PyUnicode_Check(pyname))
+	{
+		PyErr_SetString(PyExc_TypeError, "[dvbreader.c] pyUnicode_DecodeLatin1()");
+		return str;
+	}
+
+	utf8string = PyUnicode_AsUTF8String(pyname);
+	Py_DECREF(pyname);
+	if (!PyUnicode_Check(utf8string))
+	{
+		if (PyBytes_AsString(utf8string))
+			str = strdup(PyBytes_AsString(utf8string));
+	}
+	Py_XDECREF(utf8string);
+
+	return str;
+}
+#endif
+
 /*
 	DMX_SET_SOURCE no longer exists. For more info check the following:
 	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/uapi/linux/dvb/dmx.h?h=v4.17&id=13adefbe9e566c6db91579e4ce17f1e5193d6f2c
@@ -99,16 +129,23 @@ PyObject *ss_parse_bat(unsigned char *data, int length) {
 
 				int region_id = (data[offset2] << 8) | data[offset2 + 1];
 				memcpy(lang, data + offset2 + 2, 3);
+				char *lang_ptr = lang;
 				unsigned char description_size = data[offset2 + 5];
 				if (description_size == 255)
 					description_size--;
 				memcpy(description, data + offset2 + 6, description_size);
+				char *description_ptr = description;
 
 				PyObject *item = Py_BuildValue("{s:i,s:i,s:s,s:s}",
 							"descriptor_tag", descriptor_tag,
 							"region_id", region_id,
-							"language", lang,
-							"description", description);
+#if PY_MAJOR_VERSION >= 3
+							"language", Py3_UnicodeUtf8String(lang_ptr),
+							"description", Py3_UnicodeUtf8String(description_ptr));
+#else
+							"language", lang_ptr,
+							"description", description_ptr);
+#endif
 
 				PyList_Append(list, item);
 				Py_DECREF(item);
@@ -162,12 +199,17 @@ PyObject *ss_parse_bat(unsigned char *data, int length) {
 					description_size--;
 
 				memcpy(description, data + offset2 + 7, description_size);
+				char *description_ptr = description;
 
 				PyObject *item = Py_BuildValue("{s:i,s:i,s:i,s:s}",
 						"descriptor_tag", descriptor_tag,
 						"category_group", category_group,
 						"category_id", category_id,
-						"description", description);
+#if PY_MAJOR_VERSION >= 3
+						"description", Py3_UnicodeUtf8String(description_ptr));
+#else
+						"description", description_ptr);
+#endif
 
 				PyList_Append(list, item);
 				Py_DECREF(item);
@@ -190,7 +232,11 @@ PyObject *ss_parse_bat(unsigned char *data, int length) {
 			PyObject *item = Py_BuildValue("{s:i,s:i,s:s}",
 						"descriptor_tag", descriptor_tag,
 						"bouquet_id", bouquet_id,
+#if PY_MAJOR_VERSION >= 3
+						"description", Py3_UnicodeUtf8String(description_ptr));
+#else
 						"description", description_ptr);
+#endif
 
 			PyList_Append(list, item);
 			Py_DECREF(item);
@@ -801,8 +847,13 @@ PyObject *ss_parse_nit(unsigned char *data, int length) {
 					offset4 += 4;
 					PyObject *item = Py_BuildValue("{s:i,s:s,s:s,s:i,s:i,s:i,s:i,s:i,s:i}",
 							"channel_list_id", channel_list_id,
+#if PY_MAJOR_VERSION >= 3
+							"channel_list_name", Py3_UnicodeUtf8String(channel_list_name_ptr),
+							"country_code", Py3_UnicodeUtf8String(country_code_ptr),
+#else
 							"channel_list_name", channel_list_name_ptr,
 							"country_code", country_code_ptr,
+#endif
 							"transport_stream_id", transport_stream_id,
 							"original_network_id", original_network_id,
 							"service_id", service_id,
@@ -943,8 +994,13 @@ PyObject *ss_parse_sdt(unsigned char *data, int length) {
 					"service_id", service_id,
 					"service_type", service_type,
 					"free_ca", free_ca,
+#if PY_MAJOR_VERSION >= 3
+					"service_name", Py3_UnicodeUtf8String(service_name_ptr),
+					"provider_name", Py3_UnicodeUtf8String(provider_name_ptr),
+#else
 					"service_name", service_name_ptr,
 					"provider_name", provider_name_ptr,
+#endif
 					"logical_channel_number", lcn_id,
 					"bouquets_id", bouquets_id,
 					"service_group_id", service_group_id,
@@ -1026,8 +1082,13 @@ PyObject *ss_parse_fastscan(unsigned char *data, int length) {
 					"original_network_id", original_network_id,
 					"service_id", service_id,
 					"service_type", service_type,
+#if PY_MAJOR_VERSION >= 3
+					"service_name", Py3_UnicodeUtf8String(service_name_ptr),
+					"provider_name", Py3_UnicodeUtf8String(provider_name_ptr));
+#else
 					"service_name", service_name_ptr,
 					"provider_name", provider_name_ptr);
+#endif
 
 		PyList_Append(list, item);
 		Py_DECREF(item);
@@ -1051,7 +1112,8 @@ PyObject *ss_parse_header_nit(unsigned char *data, int length, const char *varia
 	char network_name[256];
 	memset(network_name, '\0', 256);
 	strcpy(network_name, "Unknown");
-	
+	char *network_name_ptr = network_name;
+
 	while (network_descriptors_length > 0)
 	{
 		int descriptor_tag = data[offset];
@@ -1075,7 +1137,11 @@ PyObject *ss_parse_header_nit(unsigned char *data, int length, const char *varia
 		"version_number", version_number, "current_next_indicator", current_next_indicator,
 		"section_number", section_number, "last_section_number", last_section_number,
 		"original_network_id", original_network_id,
-		"network_name", network_name);
+#if PY_MAJOR_VERSION >= 3
+		"network_name", Py3_UnicodeUtf8String(network_name_ptr));
+#else
+		"network_name", network_name_ptr);
+#endif
 }
 
 PyObject *ss_parse_header_bat(unsigned char *data, int length, const char *variable_key_name)
@@ -1284,17 +1350,45 @@ PyObject *ss_read_nit(PyObject *self, PyObject *args) {
 }
 
 static PyMethodDef dvbreaderMethods[] = {
-		{ "open", ss_open, METH_VARARGS },
-		{ "close", ss_close, METH_VARARGS },
-		{ "read_bat", ss_read_bat, METH_VARARGS },
-		{ "read_nit", ss_read_nit, METH_VARARGS },
-		{ "read_sdt", ss_read_sdt, METH_VARARGS },
-		{ "read_fastscan", ss_read_fastscan, METH_VARARGS },
-		{ "read_ts", ss_read_ts, METH_VARARGS },
-		{ NULL, NULL }
+	{ "open", ss_open, METH_VARARGS },
+	{ "close", ss_close, METH_VARARGS },
+	{ "read_bat", ss_read_bat, METH_VARARGS },
+	{ "read_nit", ss_read_nit, METH_VARARGS },
+	{ "read_sdt", ss_read_sdt, METH_VARARGS },
+	{ "read_fastscan", ss_read_fastscan, METH_VARARGS },
+	{ "read_ts", ss_read_ts, METH_VARARGS },
+	{ NULL, NULL }
 };
 
-void initdvbreader() {
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef moduledef = {
+	PyModuleDef_HEAD_INIT,
+	"dvbreader",
+	NULL,
+	-1,
+	dvbreaderMethods,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+#define INITERROR return NULL
+PyMODINIT_FUNC PyInit_dvbreader(void)
+#else
+#define INITERROR return
+PyMODINIT_FUNC initdvbreader(void)
+#endif
+{
 	PyObject *m;
+#if PY_MAJOR_VERSION >= 3
+	m = PyModule_Create(&moduledef);
+#else
 	m = Py_InitModule("dvbreader", dvbreaderMethods);
+#endif
+	if (m == NULL) {
+		INITERROR;
+	}
+#if PY_MAJOR_VERSION >= 3
+	return m;
+#endif
 }

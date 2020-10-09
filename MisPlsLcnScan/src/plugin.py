@@ -1,4 +1,5 @@
 # for localized messages
+from __future__ import print_function
 from . import _
 
 from Screens.Screen import Screen
@@ -119,7 +120,7 @@ class MisPlsLcnScanScreen(ConfigListScreen, Screen):
 			self.close(False)
 
 	def MisPlsLcnScanCallback(self, answer=None):
-		print "answer", answer
+		print("answer", answer)
 		if answer:
 			self.feid = answer[0]
 			self.transponders = answer[1]
@@ -167,5 +168,5 @@ def Plugins(**kwargs):
 	if hasMultistream():
 		pList.append( PluginDescriptor(name=_("MIS/PLS LCN Scan"), description="For scanning multiple input stream tv", where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=MisPlsLcnScanStart) )
 	else:
-		print "[MisPlsLcnScan] No MIS/PLS capable tuner available so don't load"
+		print("[MisPlsLcnScan] No MIS/PLS capable tuner available so don't load")
 	return pList
