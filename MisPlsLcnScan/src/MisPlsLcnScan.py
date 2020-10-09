@@ -425,7 +425,7 @@ class MisPlsLcnScan(Screen):
 
 		fd = dvbreader.open(demuxer_device, nit_current_pid, nit_current_table_id, mask, self.selectedNIM)
 		if fd < 0:
-			print("[MakeBouquet][readNIT] Cannot open the demuxer")
+			print("[MisPlsLcnScan][readNIT] Cannot open the demuxer")
 			return
 
 		timeout = datetime.datetime.now()
@@ -433,7 +433,7 @@ class MisPlsLcnScan(Screen):
 
 		while True:
 			if datetime.datetime.now() > timeout:
-				print("[MakeBouquet][readNIT] Timed out reading NIT")
+				print("[MisPlsLcnScan][readNIT] Timed out reading NIT")
 				break
 
 			section = dvbreader.read_nit(fd, nit_current_table_id, nit_other_table_id)
@@ -461,11 +461,11 @@ class MisPlsLcnScan(Screen):
 		dvbreader.close(fd)
 
 		if not nit_current_content:
-			print("[MakeBouquet][readNIT] current transponder not found")
+			print("[MisPlsLcnScan][readNIT] current transponder not found")
 			return
 
 		LCNs = [t for t in nit_current_content if "descriptor_tag" in t and t["descriptor_tag"] == 0x83 and t["original_network_id"] in PROVIDERS[config.plugins.MisPlsLcnScan.provider.value]["onids"]]
-		print("[MakeBouquet][readNIT] LCNs", LCNs)
+		print("[MisPlsLcnScan][readNIT] LCNs", LCNs)
 		if LCNs:
 			for LCN in LCNs:
 				LCNkey = "%x:%x:%x" % (LCN["transport_stream_id"], LCN["original_network_id"], LCN["service_id"])
