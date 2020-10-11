@@ -508,7 +508,7 @@ class MisPlsLcnScan(Screen):
 	def readBouquetIndex(self):
 		try:
 			bouquets = open(self.path + "/" + self.bouquetsIndexFilename, "r")
-		except Exception, e:
+		except Exception as e:
 			return ""
 		content = bouquets.read()
 		bouquets.close()
