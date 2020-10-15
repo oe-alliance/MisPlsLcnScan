@@ -15,6 +15,8 @@ m4_ifdef([LT_INIT], [LT_INIT], [AC_PROG_LIBTOOL])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CHECK_HEADERS([dbox/fp.h dbox/lcd-ks0713.h])
+CPPFLAGS="$CPPFLAGS $PYTHON_CPPFLAGS"
+LDFLAGS="$LDFLAGS $PYTHON_LDFLAGS"
 
 AC_PATH_PROG(MSGFMT, msgfmt, AC_MSG_ERROR(Could not find msgfmt))
 AC_PATH_PROG(MSGINIT, msginit, AC_MSG_ERROR(Could not find msginit))
