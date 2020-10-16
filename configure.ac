@@ -31,7 +31,6 @@ Makefile
 MisPlsLcnScan/Makefile
 MisPlsLcnScan/images/Makefile
 MisPlsLcnScan/lib/Makefile
-MisPlsLcnScan/meta/Makefile
 MisPlsLcnScan/po/Makefile
 MisPlsLcnScan/src/Makefile
 ])
