@@ -14,13 +14,12 @@ from Components.NimManager import nimmanager
 
 from enigma import eDVBResourceManager, eTimer, eDVBDB, eDVBFrontendParameters, eDVBFrontendParametersSatellite
 
-from providers import PROVIDERS
-
+from .providers import PROVIDERS
+from . import dvbreader
 import datetime
 import time
 
-import dvbreader
-from MisPlsLcnScanSkin import downloadBar
+from .MisPlsLcnScanSkin import downloadBar
 
 class MisPlsLcnScan(Screen):
 	skin = downloadBar
