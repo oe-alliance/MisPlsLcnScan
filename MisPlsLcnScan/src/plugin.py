@@ -17,8 +17,8 @@ from Tools.BoundFunction import boundFunction
 
 from enigma import eComponentScan
 
-from MisPlsLcnScan import MisPlsLcnScan
-from providers import PROVIDERS
+from .MisPlsLcnScan import MisPlsLcnScan
+from .providers import PROVIDERS
 
 config.plugins.MisPlsLcnScan = ConfigSubsection()
 config.plugins.MisPlsLcnScan.provider = ConfigSelection(default = "fransat_5W", choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys())])
