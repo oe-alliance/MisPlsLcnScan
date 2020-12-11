@@ -1,1 +1,1 @@
-SUBDIRS = images lib po src
+SUBDIRS = lib po src

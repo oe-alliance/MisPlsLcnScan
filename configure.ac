@@ -31,7 +31,6 @@ AX_PTHREAD
 AC_CONFIG_FILES([
 Makefile
 MisPlsLcnScan/Makefile
-MisPlsLcnScan/images/Makefile
 MisPlsLcnScan/lib/Makefile
 MisPlsLcnScan/po/Makefile
 MisPlsLcnScan/src/Makefile
