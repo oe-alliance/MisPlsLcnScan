@@ -91,7 +91,7 @@ msgid "Scanning transponders"
 msgstr "Сканирование транспондеров"
 
 msgid "Select the provider you wish to scan."
-msgstr ""
+msgstr "Выберите провайдера, которого хотите сканировать."
 
 msgid "Starting scanner"
 msgstr "Старт сканера"
