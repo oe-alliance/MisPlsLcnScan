@@ -49,7 +49,7 @@ def downloadBarTemplate():
 			<convert type="FrontendInfo">LOCK</convert>
 			<convert type="ConditionalShowHide"/>
 		</widget>
-		<widget source="Frontend" conditional="Frontend" render="Pixmap" pixmap="icons/lock_off.png" position="%d,%d" size="%d,%d" alphatest="on" scale="1">
+		<widget source="Frontend" conditional="Frontend" render="Pixmap" pixmap="icons/lock_off.png" position="%d,%d" size="%d,%d" alphatest="blend" scale="1">
 			<convert type="FrontendInfo">LOCK</convert>
 			<convert type="ConditionalShowHide">Invert</convert>
 		</widget>
