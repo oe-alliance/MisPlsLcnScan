@@ -45,7 +45,7 @@ def downloadBarTemplate():
 	<screen name="DownloadBar" position="0,0" size="e,%d" flags="wfNoBorder" backgroundColor="#54111112">
 		<widget name="action" position="%d,%d" size="%d,%d" font="Regular;%d" transparent="1" foregroundColor="#ffffff"/>
 		<widget name="status" position="%d,%d" size="%d,%d" font="Regular;%d" halign="center" transparent="1" foregroundColor="#ffffff"/>
-		<widget source="Frontend" conditional="Frontend" render="Pixmap" pixmap="icons/lock_on.png" position="%d,%d" size="%d,%d" alphatest="on" scale="1">
+		<widget source="Frontend" conditional="Frontend" render="Pixmap" pixmap="icons/lock_on.png" position="%d,%d" size="%d,%d" alphatest="blend" scale="1">
 			<convert type="FrontendInfo">LOCK</convert>
 			<convert type="ConditionalShowHide"/>
 		</widget>
